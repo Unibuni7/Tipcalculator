@@ -6,25 +6,25 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.widget.EditText;
 import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
 import java.text.NumberFormat;
 
 public class Tips extends AppCompatActivity {
 
-    // currency and percent formatter objects
+    // currency and percent formatter objects.
     private static final NumberFormat currencyFormat =
             NumberFormat.getCurrencyInstance();
-    private static final NumberFormat ProcentFormat =
+    private static final NumberFormat percentFormat =
             NumberFormat.getPercentInstance();
 
-
-    private double Amount = 0.0; // bill amount entered by the user
-    private double Procent = 0.15; // initial tip percentage
-    private TextView Amount_text; // shows formatted bill amount
-    private TextView Procent_text; // shows tip percentage
-    private EditText Tip_text; // shows calculated tip amount
-    private EditText Total_text; // shows calculated total bill amount
+    private double BillAmount = 0.0; // bill amount entered by the user
+    private double Percent = 0.15; // initial tip percentage
+    private TextView AmountTextView; // shows formatted bill amount
+    private TextView PercentTextView; // shows tip percentage
+    private TextView TipTextView; // shows calculated tip amount
+    private TextView TotalTextView; // shows calculated total bill amount
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,45 +32,43 @@ public class Tips extends AppCompatActivity {
         setContentView(R.layout.activity_tips);
 
         // get references to programmatically manipulated TextViews
-        Amount_text = (EditText) findViewById(R.id.Amountnum);
-        Procent_text = (TextView) findViewById(R.id.Procenttxt);
-        Tip_text = (EditText) findViewById(R.id.Tipnum);
-        Total_text = (EditText) findViewById(R.id.Totalnum);
-        Tip_text.setText(currencyFormat.format(0));
-        Total_text.setText(currencyFormat.format(0));
+        AmountTextView = (TextView) findViewById(R.id.AmountTextView);
+        PercentTextView = (TextView) findViewById(R.id.PercentTipTextview);
+        TipTextView = (TextView) findViewById(R.id.TipTextView);
+        TotalTextView = (TextView) findViewById(R.id.TotalTextView);
+        TipTextView.setText(currencyFormat.format(0));
+        TotalTextView.setText(currencyFormat.format(0));
 
         // set amountEditText's TextWatcher
-        //TextWatcher is used to keep watch on the EditText content while user inputs the data.
-        // It allows you to keep track on each character when entered on EditText.
-        EditText AmountEditText =
-                (EditText) findViewById(R.id.Amounttxt);
-        AmountEditText.addTextChangedListener((TextWatcher) AmountEditText);
+        //This method is called to notify you that, somewhere within s, the text has been changed.
+        // It is legitimate to make further changes to s from this callback, but be careful not to get yourself into an infinite loop,
+        // because any changes you make will cause this method to be called again recursively.
+        EditText amountEditText =
+                (EditText) findViewById(R.id.AmountEditText);
+        amountEditText.addTextChangedListener(AmountEditTextWatcher);
 
-        EditText TipEditText =
-                (EditText) findViewById(R.id.Tipnum);
-        TipEditText.addTextChangedListener((TextWatcher) TipEditText);
-
-        EditText TotalEditText =
-                (EditText) findViewById(R.id.Totalnum);
-        TotalEditText.addTextChangedListener((TextWatcher) TotalEditText);
 
         // set percentSeekBar's OnSeekBarChangeListener
-        SeekBar Procentseekbar =
-                (SeekBar) findViewById(R.id.Procentbar);
-        Procentseekbar.setOnSeekBarChangeListener(seekBarListener);
+        //A callback that notifies clients when the progress level has been changed.
+        // This includes changes that were initiated by the user through a touch gesture or arrow key/trackball
+        // as well as changes that were initiated programmatically.
+        SeekBar percentSeekBar =
+                (SeekBar) findViewById(R.id.PercentSeekBar);
+        percentSeekBar.setOnSeekBarChangeListener(seekBarListener);
     }
 
+    // calculate and display tip and total amounts
     private void calculate() {
-        // format Procent and display in Procent textview
-        Procent_text.setText(ProcentFormat.format(Procent));
+        // format percent and display in percentTextView
+        PercentTextView.setText(percentFormat.format(Percent));
 
         // calculate the tip and total
-        double tip = Amount * Procent;
-        double total = Amount + tip;
+        double tip = BillAmount * Percent;
+        double total = BillAmount + tip;
 
         // display tip and total formatted as currency
-        Tip_text.setText(currencyFormat.format(tip));
-        Total_text.setText(currencyFormat.format(total));
+        TipTextView.setText(currencyFormat.format(tip));
+        TotalTextView.setText(currencyFormat.format(total));
     }
 
     // listener object for the SeekBar's progress changed events
@@ -78,47 +76,55 @@ public class Tips extends AppCompatActivity {
             new SeekBar.OnSeekBarChangeListener() {
                 // update percent, then call calculate
                 @Override
-                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                    Procent = progress / 100.0; // set percent based on progress
+                public void onProgressChanged(SeekBar seekBar, int progress,
+                                              boolean fromUser) {
+                    Percent = progress / 100.0; // set percent based on progress
                     calculate(); // calculate and display tip and total
                 }
 
                 @Override
                 public void onStartTrackingTouch(SeekBar seekBar) {
-
                 }
 
                 @Override
                 public void onStopTrackingTouch(SeekBar seekBar) {
-
                 }
             };
 
-
     // listener object for the EditText's text-changed events
-    private final TextWatcher amountEditTextWatcher = new TextWatcher() {
+    private final TextWatcher AmountEditTextWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
         // called when the user modifies the bill amount
         @Override
         public void onTextChanged(CharSequence s, int start,
                                   int before, int count) {
 
             try { // get bill amount and display currency formatted value
-                Amount = Double.parseDouble(s.toString()) / 100.0;
-                Amount_text.setText(currencyFormat.format(Amount));
-            }
-            catch (NumberFormatException e) { // if s is empty or non-numeric
-                Amount_text.setText("");
-                Amount = 0.0;
+                BillAmount = Double.parseDouble(s.toString()) / 100.0;
+                AmountTextView.setText(currencyFormat.format(BillAmount));
+            } catch (NumberFormatException e) { // if s is empty or non-numeric
+                AmountTextView.setText("");
+                BillAmount = 0.0;
             }
 
-            calculate(); // update the tip and total TextViews
+
         }
 
         @Override
-        public void afterTextChanged(Editable s) { }
+        public void afterTextChanged(Editable s) {
 
-        @Override
-        public void beforeTextChanged(
-                CharSequence s, int start, int count, int after) { }
+        }
+
     };
 }
+
+
+
+
+
+
+
