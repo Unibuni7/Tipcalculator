@@ -19,12 +19,12 @@ public class Tips extends AppCompatActivity {
     private static final NumberFormat percentFormat =
             NumberFormat.getPercentInstance();
 
-    private double BillAmount = 0.0; // bill amount entered by the user
-    private double Percent = 0.15; // initial tip percentage
-    private TextView AmountTextView; // shows formatted bill amount
-    private TextView PercentTextView; // shows tip percentage
-    private TextView TipTextView; // shows calculated tip amount
-    private TextView TotalTextView; // shows calculated total bill amount
+    private double BillAmount = 0.0; // The bill you want to enter.
+    private double Percent = 0.15; // The tip percentage on the seekbar.
+    private TextView AmountTextView; // This will show you the amount you have entered.
+    private TextView PercentTextView; // This will show the tip percentage.
+    private TextView TipTextView; // This will show the amount of tip.
+    private TextView TotalTextView; // Show the total bill amount.
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +54,7 @@ public class Tips extends AppCompatActivity {
         // as well as changes that were initiated programmatically.
         SeekBar percentSeekBar =
                 (SeekBar) findViewById(R.id.PercentSeekBar);
-        percentSeekBar.setOnSeekBarChangeListener(seekBarListener);
+        percentSeekBar.setOnSeekBarChangeListener(SeekBarListener);
     }
 
     // calculate and display tip and total amounts
@@ -72,8 +72,8 @@ public class Tips extends AppCompatActivity {
     }
 
     // listener object for the SeekBar's progress changed events
-    private final SeekBar.OnSeekBarChangeListener seekBarListener =
-            new SeekBar.OnSeekBarChangeListener() {
+    private final OnSeekBarChangeListener SeekBarListener =
+            new OnSeekBarChangeListener() {
                 // update percent, then call calculate
                 @Override
                 public void onProgressChanged(SeekBar seekBar, int progress,
@@ -111,13 +111,16 @@ public class Tips extends AppCompatActivity {
                 BillAmount = 0.0;
             }
 
-
+            calculate(); // update the tip and total TextViews
         }
+
+
 
         @Override
         public void afterTextChanged(Editable s) {
 
         }
+
 
     };
 }
