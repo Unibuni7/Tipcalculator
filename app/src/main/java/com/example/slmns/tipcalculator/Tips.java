@@ -36,6 +36,7 @@ public class Tips extends AppCompatActivity {
         PercentTextView = (TextView) findViewById(R.id.PercentTipTextview);
         TipTextView = (TextView) findViewById(R.id.TipTextView);
         TotalTextView = (TextView) findViewById(R.id.TotalTextView);
+        // here we set the chosen textviews to a currencyFormat.
         TipTextView.setText(currencyFormat.format(0));
         TotalTextView.setText(currencyFormat.format(0));
 
@@ -57,7 +58,7 @@ public class Tips extends AppCompatActivity {
         percentSeekBar.setOnSeekBarChangeListener(SeekBarListener);
     }
 
-    // calculate and display tip and total amounts
+    // This method will calculate the tip and the total amount.
     private void calculate() {
         // format percent and display in percentTextView
         PercentTextView.setText(percentFormat.format(Percent));
